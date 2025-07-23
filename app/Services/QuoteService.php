@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use App\Models\Ageload;
 use App\Models\Currency;
 use App\Models\Quotation;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class QuoteService
@@ -30,7 +30,7 @@ class QuoteService
      * Create a new quotation.
      *
      * @param array $data
-     * @return Quotation
+     * @return JsonResponse|object
      */
     public function createQuotation(array $data): object
     {
@@ -74,6 +74,11 @@ class QuoteService
 
     /**
      * Calculate the total.
+     * 
+     * @param array $ages
+     * @param float $getCurrencyFixRates
+     * @param int $travelDays
+     * @return float|false
      *
      */
     private function calculateTotal(array $ages, float $getCurrencyFixRates, int $travelDays): float|false
