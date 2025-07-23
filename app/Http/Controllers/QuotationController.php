@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\QuoteService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\QuotationRequest;
-use Illuminate\Http\JsonResponse;
 
 class QuotationController extends Controller
 {
