@@ -12,7 +12,7 @@ class Currency extends Model
     protected $fillable = ['currency_id', 'fixed_rate'];
 
 
-     /**
+    /**
      * Get currency fix rates.
      *
      */

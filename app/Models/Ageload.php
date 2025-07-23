@@ -15,7 +15,10 @@ class Ageload extends Model
         'load'
     ];
 
-    // get age load exists
+    /**
+     * Check age is exists.
+     *
+     */
     public function ageExists(int $age): bool
     {
         return $this->where('min_age', '<=', $age)
