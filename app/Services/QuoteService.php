@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Ageload;
 use App\Models\Currency;
 use App\Models\Quotation;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class QuoteService
@@ -22,6 +23,26 @@ class QuoteService
         public Ageload $ageloadModel,
         public Quotation $quotationModel
     ) {}
+
+    /**
+     * Get my quotations.
+     *
+     * @return JsonResponse|object
+     */
+    public function getQuotations($data): object
+    {
+        try {
+            $perPage = $data->get('perPage', 10);
+            $user = Auth::user();
+
+            $quotations = $this->quotationModel->where('user_id', $user->id)->orderBy('id', 'desc')
+            ->paginate($perPage);
+
+            return apiServiceResponse($quotations, true, 'My quotation retrieved successfully');
+        } catch (\Throwable $th) {
+            return apiServiceResponse([], false, $th->getMessage());
+        }
+    }
 
 
     /**
@@ -48,10 +69,13 @@ class QuoteService
             $calculateTotal = $this->calculateTotal($ages, $getCurrency->fixed_rate, $travelDays);
 
             $output = $this->quotationModel->create([
+                'user_id' => Auth::id(),
                 'currency_id' => $getCurrency->id,
                 'currency' => $data['currency_id'],
                 'quote_key' => generateQuoteKey('QTN-'),
-                'total' => $calculateTotal
+                'total' => $calculateTotal,
+                'start_date' => $startDate->format('Y-m-d'),
+                'end_date' => $endDate->format('Y-m-d'),
             ]);
 
             DB::commit();
