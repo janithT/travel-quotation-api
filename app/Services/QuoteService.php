@@ -18,12 +18,10 @@ class QuoteService
      * @param Quotation $quotationModel
      */
     public function __construct(
-        public Currency $currencyModel, 
-        public Ageload $ageloadModel, 
-        public Quotation $quotationModel) 
-    {
-
-    }
+        public Currency $currencyModel,
+        public Ageload $ageloadModel,
+        public Quotation $quotationModel
+    ) {}
 
 
     /**
@@ -64,11 +62,9 @@ class QuoteService
                 'total' => number_format($output->total, 2),
             ];
             return apiServiceResponse($result, true, 'Quotation created successfully');
-
         } catch (\Throwable $th) {
             DB::rollBack();
             return apiServiceResponse([], false, $th->getMessage());
-
         }
     }
 
@@ -88,7 +84,7 @@ class QuoteService
         //  $total = 0;
 
         // foreach ($ages as $age) {
-            // this will be little latency and call eloquent multiple times. :) :)  
+        // this will be little latency and call eloquent multiple times. :) :)  
         // }
 
         $totalArray = collect($ages)
@@ -99,7 +95,7 @@ class QuoteService
 
                 return ($getCurrencyFixRates * $ageLoad->load * $travelDays);
             });
-            // $total = array_sum($totalArray);
+        // $total = array_sum($totalArray);
         $total = $totalArray->sum();
 
         if ($total <= 0) {
