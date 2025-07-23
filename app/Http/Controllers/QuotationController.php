@@ -19,9 +19,17 @@ class QuotationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        //
+
+        $quotations = $this->quoteService->getQuotations($request);
+
+        if ($quotations->status) {
+            return apiResponseWithStatusCode($quotations->data, 'success', $quotations->message, '', 200);
+        } else {
+            Log::error('Quotation retrieval failed: ' . $quotations->message);
+            return apiResponseWithStatusCode([], 'error', $quotations->message, '', 422);
+        }
     }
 
     /**
