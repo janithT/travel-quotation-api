@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Ageload;
 use App\Models\Currency;
 use App\Models\Quotation;
+use App\Repositories\QutationRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +22,8 @@ class QuoteService
     public function __construct(
         public Currency $currencyModel,
         public Ageload $ageloadModel,
-        public Quotation $quotationModel
+        // public Quotation $quotationModel,
+        public QutationRepository $quotationRepository
     ) {}
 
     /**
@@ -35,12 +37,11 @@ class QuoteService
             $perPage = $data->get('perPage', 10);
             $user = Auth::user();
 
-            $quotations = $this->quotationModel->where('user_id', $user->id)->orderBy('id', 'desc')
-            ->paginate($perPage);
+            $quotations = $this->quotationRepository->getAll($perPage, $user->id);
 
             return apiServiceResponse($quotations, true, 'My quotation retrieved successfully');
-        } catch (\Throwable $th) {
-            return apiServiceResponse([], false, $th->getMessage());
+        } catch (\Exception $e) {
+            return apiServiceResponse([], false, $e->getMessage());
         }
     }
 
@@ -66,9 +67,9 @@ class QuoteService
             // if fixed_rate is common for each currency, so may be config value. (currenty im getting from database)
             $getCurrency = $this->currencyModel->getCurrencyFixRates($data['currency_id']);
             // here im calculating total.
-            $calculateTotal = $this->calculateTotal($ages, $getCurrency->fixed_rate, $travelDays);
+            $calculateTotal = $this->_calculateTotal($ages, $getCurrency->fixed_rate, $travelDays);
 
-            $output = $this->quotationModel->create([
+            $create_data = [
                 'user_id' => Auth::id(),
                 'currency_id' => $getCurrency->id,
                 'currency' => $data['currency_id'],
@@ -76,8 +77,13 @@ class QuoteService
                 'total' => $calculateTotal,
                 'start_date' => $startDate->format('Y-m-d'),
                 'end_date' => $endDate->format('Y-m-d'),
-            ]);
+            ];
 
+             $output = $this->quotationRepository->createQuote($create_data);
+
+            if (! $output->wasRecentlyCreated) {
+                return apiServiceResponse([], true, 'Quotation already created');
+            }
             DB::commit();
 
             $result =  [
@@ -86,9 +92,9 @@ class QuoteService
                 'total' => number_format($output->total, 2),
             ];
             return apiServiceResponse($result, true, 'Quotation created successfully');
-        } catch (\Throwable $th) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            return apiServiceResponse([], false, $th->getMessage());
+            return apiServiceResponse([], false, $e->getMessage());
         }
     }
 
@@ -101,7 +107,7 @@ class QuoteService
      * @return float|false
      *
      */
-    private function calculateTotal(array $ages, float $getCurrencyFixRates, int $travelDays): float|false
+    private function _calculateTotal(array $ages, float $getCurrencyFixRates, int $travelDays): float|false
     {
         $ageLoads = $this->ageloadModel->all();
 

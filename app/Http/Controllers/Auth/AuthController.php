@@ -22,27 +22,27 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        try {
-            $token = $this->authService->userLogin($request->validated());
+        
+        $token = $this->authService->userLogin($request->validated());
 
-            if (isset($token['error'])) {
-                return apiResponseWithStatusCode([], 'error', $token['error'], '', 401);
-            }
-
-            return apiResponseWithStatusCode($token, 'success', 'You have successfully logged in', '', 200);
-        } catch (\Exception $e) {
-            return apiResponseWithStatusCode([], 'error', $e->getMessage(), '', 401);
+        if ($token && $token->status) {
+             return apiResponseWithStatusCode($token->data, 'success', $token->message, '', 200);
         }
+        return apiResponseWithStatusCode([], 'error', $token['error'], '', 401);
+       
     }
 
     /**
-     * Log in a user and return a JWT token.
+     * Log in a user and return a JWT token.a
      *
      * @return JsonResponse
      */
     public function logout(): JsonResponse
     {
-        $this->authService->logout();
-        return apiResponseWithStatusCode([], 'success', 'You have successfully logged out', '', 200);
+        $logout = $this->authService->logout();
+        if ($logout && $logout->status) {
+            return apiResponseWithStatusCode([], 'success', 'You have successfully logged out', '', 200);
+        }
+        return apiResponseWithStatusCode([], 'error', $logout->message, '', 401);
     }
 }

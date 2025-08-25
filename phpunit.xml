@@ -23,11 +23,11 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_STORE" value="array"/>
         <env name="DB_CONNECTION" value="mysql"/>
-        <env name="DB_DATABASE" value="quotation_app_test"/>
-        <env name="DB_USERNAME" value="root"/>
-        <env name="DB_PASSWORD" value="root"/>
-        <env name="DB_HOST" value="127.0.0.1"/>
-        <env name="DB_PORT" value="3306"/>
+        <env name="DB_DATABASE" value="env('DB_DATABASE')"/>
+        <env name="DB_USERNAME" value="env('DB_USERNAME')"/>
+        <env name="DB_PASSWORD" value="env('DB_PASSWORD')"/>
+        <env name="DB_HOST" value="env('DB_HOST')"/>
+        <env name="DB_PORT" value="env('DB_PORT')"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
