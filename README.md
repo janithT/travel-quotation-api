@@ -87,6 +87,7 @@ Below steps will guide you through setting up and running the Laravel applicatio
 - Add more test cases.
 - User Auth/Register module and user/tenent.
 - Improved UI versions.
+- Edit and update quotation capabilities.
 - Delete and restore capabilities.
 
 
