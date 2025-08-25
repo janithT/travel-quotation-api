@@ -1,42 +1,92 @@
 # Laravel Travel Quotation API  Project Setup
 
-This guide walks you through setting up and running the Laravel application.
+This project was generated with [Laravel 12](https://laravel.com/) version 12.
 
-## 📦 Clone the Repository
+A Laravel-based routes with RESTful API for managing your travel quotations with full CRUD operations.
 
-```bash
-git clone [repository]
-cd / the app directory.
+Design pattern (MVC pattern): 
+    UI -> Routes -> Controller -> Service -> Repository + Model 
 
-## 📦 Install PHP dependencies:
+Below steps will guide you through setting up and running the Laravel application.
 
-composer install
+## Development server
 
-Copy the example environment file and generate an application key:
+- If you dont have below requirment install, please install them first.
+    - Normal setup
+        Find ## Requirements mentioned here and install.
 
-cp .env.example .env
-php artisan key:generate
+        # Installation
 
-Update the `.env` file with your database credentials:
+        ```bash
+            # Clone the repository
+            git clone from repository
+            cd your_project_root (root)
 
-DB_CONNECTION=mysql  
-DB_HOST=127.0.0.1  
-DB_PORT=3306  
-DB_DATABASE=your_database  
-DB_USERNAME=your_username  
-DB_PASSWORD=your_password  
+            # Install PHP and npm dependencies
+            composer install
+            npm install
 
-## 📦 Run database migrations and seeders:
+            # Create environment file
+            cp .env.example .env
+             cp .env.example .env.testing (update testing database credentials accordingly. refer: phpunit.xml)
 
-php artisan migrate --seed
+            # Configure your .env file (DB connection, auth, mail, etc., )
+            # Generate application key
+            php artisan key:generate
+
+            # Run database migrations
+            php artisan migrate
+
+            # (Optional) Seed the database
+            php artisan db:seed
+
+            # Start the development server
+            php artisan serve
+            npm run dev
+
+            Navigate to `http://127.0.0.1:port`. The application will automatically reload with the source files.
+
+    - Containerization 
+         ```bash
+            # Setup/install Docker 
+
+            # Create `Dockerfile` for install php dependency and other configurations.
+
+            # Create `docker-compose.yml` for create services like TaskMApiApp, TaskMworker (for queue/background process : send emails) and Mysql_db app.
+
+            # Then run `docker-compose up -d` for create/ serve the containers. 
 
 
-## 📦Start the development server:
 
-php artisan serve
+## 🚀 Features
 
-Visit the application in your browser at:  
-http://localhost:8000
+- API/Route security - (X-APP-TOKEN).
+- Clean architecture (Controller → Service Layer → Repository/Model).
+- Well-structured JSON responses (Helpers response).
+- Protected API routes.
+- Database migrations and seeders.
+- Notification handling for errors and success responses.
+- Request data validations.
+- Throttling route for security. 
+- Centerlized exception handle in laravel 12 way.
 
-You're all set!
-(Find the user credentials from DatabaseSeeder)
+## Requirements
+
+- PHP ^8.2
+- Laravel ^12
+- Composer
+- MySQL
+
+## Tech Stack
+
+- [Laravel-12] - php framework
+- [Angular] - for frontend web app.
+- [MaterialUI] - UI library for components.
+
+## Future updates
+- Add more test cases.
+- User Auth/Register module and user/tenent.
+- Improved UI versions.
+- Delete and restore capabilities.
+
+

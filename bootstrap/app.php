@@ -4,6 +4,7 @@ use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,5 +22,17 @@ return Application::configure(basePath: dirname(__DIR__))
 
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (Throwable $e, Request $request) {
+           $className = get_class($e);
+            $handlers = App\Exceptions\Handler::$handlers;
+
+            if (array_key_exists($className, $handlers)) {
+                $method = $handlers[$className];
+                $apiHandler = new App\Exceptions\Handler(app());
+                return $apiHandler->$method($e, $request);
+            }
+ 
+            return apiResponseWithStatusCode([], 'error', $e->getMessage(), '', 422);
+
+        });
     })->create();

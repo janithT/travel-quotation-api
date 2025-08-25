@@ -14,15 +14,22 @@ class AuthService
      * @return string
      * @throws \Exception
      */
-    public function userLogin(array $credentials): array
+    public function userLogin(array $credentials): object
     {
 
-        $token = JWTAuth::attempt($credentials);
-        if (!$token) {
-            return ['error' => 'Invalid Credentials'];
-        }
+        try {
+            $token = JWTAuth::attempt($credentials);
+            if (!$token) {
+                throw new \Illuminate\Auth\AuthenticationException("Invalid credentials.");
+            }
 
-        return $this->withJwTToken(['token' => $token]);
+            $data = $this->withJwTToken(['token' => $token]);
+
+            return apiServiceResponse($data, true, 'Login success');
+
+        } catch (\Exception $e) {
+            return apiServiceResponse([], false, $e->getMessage());
+        }
     }
 
 
@@ -30,9 +37,16 @@ class AuthService
      * Logout user
      * 
      */
-    public function logout(): void
+    public function logout(): Object
     {
-        JWTAuth::invalidate(JWTAuth::getToken());
+        try {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return apiServiceResponse([], true, 'Logot success');
+
+        } catch (\Exception $e) {
+            return apiServiceResponse([], false, $e->getMessage());
+        }
+        
     }
 
 
